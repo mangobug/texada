@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+
+{% block title %}My Store{% endblock %}
+
+{% block content %}
+
+    <section>
+      <table class="table table-condensed">
+        <thead class="thead-default">
+          <tr>
+            <th>ID</th>
+            <th>Description</th>
+            <th>Date & Time</th>
+            <th>Lng/Lat</th>
+            <th>Elevation</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% if not latest_products %}
+            <p style="color: red;">You have not added any new products here.</p>
+          {% else %}
+            {% for p in latest_products %}
+              <tr>
+                <th scope="row"><a href="{% url 'product_view' p.id %}">{{ p.product_id }}</a></th>
+                <td>{{ p.description }}</td>
+                <td>{{ p.datetime }}</td>
+                <td>{{ p.longitude }}, {{ p.latitude }}</td>
+                <td>{{ p.elevation }}</td>
+                <td><a href="{% url 'product_update' p.id %}" type="button" class="btn-link">Edit</a></td>
+                <td><span id="{{ p.id }}" class="label label-danger">Delete</span></td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <div class="row">
+        {% csrf_token %}
+        <a href="{% url 'product_create' %}" class="btn btn-primary" role="button">Add Product</a>
+        <a href="{% url 'upload_file' %}" class="btn btn-info" role="button">Import Data</a>
+        <a href="{% url 'export_all_data' %}" class="btn btn-warning" role="button">Export All Data</a>
+        <a href="{% url 'export_data' %}" class="btn btn-success" role="button">Report</a>
+      </div>
+    </section>
+{% endblock %}
+
+{% block extra_body %}
+
+<script type="text/javascript">
+  $( ".label-danger" ).click(function(e) {
+    $.ajax({
+        url : "{% url 'delete_product' %}",
+        type: "GET",
+        data : {
+                'csrfmiddlewaretoken': $( "input[name='csrfmiddlewaretoken']" ).val(),
+                'product_id': e.target.id
+               },
+        dataType : "json",
+        success: function( response ){
+          if (response[0] == true) {
+            $('span#' + e.target.id).parent().parent().fadeOut();
+          }
+
+        }
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load bootstrap3 %}
+
+{% block title %}
+    Update Product Entry
+{% endblock %}
+
+{% block content %}
+
+  <form action="" method="post">{% csrf_token %}
+    <div class="col-md-8">
+      {% bootstrap_form form layout='horizontal' %}
+      <input class="btn btn-primary" type="submit" value="Update" style="padding: 8px 20px; margin: 12px; "/>
+    </div>
+  </form>
+
+{% endblock %}
